@@ -1,31 +1,28 @@
-const axios = require("axios");
+import fetch from "node-fetch";
 
-const GEMINI_KEYS = [process.env.G1_KEY, process.env.G2_KEY];
+const API_KEYS = [process.env.G1, process.env.G2];
+let current = 0;
 
-async function callGeminiApi(prompt) {
-  for (let key of GEMINI_KEYS) {
-    try {
-      const response = await axios.post(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
-        { contents: [{ parts: [{ text: prompt }] }] },
-        { params: { key } }
-      );
-      return response.data;
-    } catch (error) {
-      console.warn("Key failed, trying next...");
-    }
+async function callGemini(prompt) {
+  try {
+    const response = await fetch("https://gemini.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEYS[current]}`
+      },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+
+    if (!response.ok) throw new Error("Gemini failed");
+    return await response.json();
+  } catch (err) {
+    current = (current + 1) % API_KEYS.length; // 🔄 Key fallback
+    return { error: "Switched API key, try again" };
   }
-  throw new Error("All Gemini API keys failed.");
 }
 
-async function analyzeSEO(title, description, tags) {
-  const prompt = `SEO Analysis:\nTitle: ${title}\nDescription: ${description}\nTags: ${tags}`;
-  return await callGeminiApi(prompt);
+export async function analyzeSEO(title, description, tags) {
+  const prompt = `Check SEO for Title: ${title}, Description: ${description}, Tags: ${tags}`;
+  return await callGemini(prompt);
 }
-
-async function analyzeThumbnail(imageUrl, type) {
-  const prompt = `Analyze this ${type} thumbnail: ${imageUrl}`;
-  return await callGeminiApi(prompt);
-}
-
-module.exports = { analyzeSEO, analyzeThumbnail };
