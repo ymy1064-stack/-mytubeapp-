@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "SEO YouGrow",
+    "slug": "seo-yougrow",
+    "scheme": "seoyougrow",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f172a"
+    },
+    "android": {
+      "package": "com.seoyougrow.app",
+      "permissions": [],
+      "googleServicesFile": "",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#0f172a"
+      }
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.seoyougrow.app"
+    },
+    "extra": {
+      "backendUrl": "YOUR_BACKEND_URL"
+    }
+  }
+}
