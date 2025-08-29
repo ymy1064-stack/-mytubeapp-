@@ -5,10 +5,5 @@
   "workspaces": [
     "frontend",
     "backend"
-  ],
-  "scripts": {
-    "dev": "echo 'Run frontend and backend separately'",
-    "start:frontend": "cd frontend && expo start",
-    "start:backend": "cd backend && node server.js"
-  }
+  ]
 }
