@@ -1,0 +1,8 @@
+{
+  "name": "myyoutubeapp-monorepo",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}
