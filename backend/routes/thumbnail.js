@@ -1,15 +1,19 @@
-const express = require("express");
-const router = express.Router();
-const { analyzeThumbnail } = require("../services/gemini");
+import { Router } from 'express';
+import { ensureUser } from '../services/youtube.js';
+import { analyzeThumbnail } from '../services/gemini.js';
 
-router.post("/analyze", async (req, res) => {
+const r = Router();
+
+r.post('/analyze', ensureUser, async (req, res) => {
   try {
-    const { imageUrl, type } = req.body; // type = long या short
-    const result = await analyzeThumbnail(imageUrl, type);
-    res.json({ success: true, feedback: result });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    const { type = "long", image = "" } = req.body || {};
+    if (!image) return res.status(400).json({ error: 'image required (base64 data URL)' });
+    const data = await analyzeThumbnail(type, image);
+    res.json({ ok: true, data });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'server error' });
   }
 });
 
-module.exports = router;
+export default r;
