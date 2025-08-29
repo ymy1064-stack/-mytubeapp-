@@ -3,8 +3,9 @@ import { View, Text } from "react-native";
 
 export default function Footer() {
   return (
-    <View style={{ padding: 10, alignItems: "center" }}>
-      <Text style={{ fontSize: 10, color: "gray" }}>© 2025 MyYouTubeApp</Text>
+    <View style={{ alignItems: "center", paddingVertical: 10 }}>
+      {/* अगर क्रेडिट हटाना हो तो अगली लाइन डिलीट कर दीजिए */}
+      <Text style={{ color: "#9ca3af", fontSize: 12 }}>Created by Lamyahed Latif</Text>
     </View>
   );
-                   }
+}
