@@ -25,7 +25,7 @@
       "bundleIdentifier": "com.seoyougrow.app"
     },
     "extra": {
-      "backendUrl": "YOUR_BACKEND_URL"
+      "backendUrl": "https://seo-you-grow.onrender.com"
     }
   }
 }
