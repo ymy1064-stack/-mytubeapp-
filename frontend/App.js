@@ -1,12 +1,41 @@
-import React from "react";
-import { SafeAreaView, StatusBar } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import HomeScreen from "./screens/HomeScreen";
 
+const API_BASE_URL = "https://seo-you-grow.onrender.com";
+
 export default function App() {
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0f172a" }}>
-      <StatusBar barStyle="light-content" />
-      <HomeScreen />
-    </SafeAreaView>
-  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // 2 सेकंड का लोडर
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#FF0000" />
+        <Text style={styles.text}>Loading...</Text>
+      </View>
+    );
+  }
+
+  return <HomeScreen apiUrl={API_BASE_URL} />;
 }
+
+const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  text: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#333",
+  },
+});
