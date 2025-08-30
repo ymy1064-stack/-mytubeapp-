@@ -94,7 +94,7 @@ export default function HomeScreen() {
       <View style={{ alignItems: "center", marginBottom: 8 }}>
         <AdMobBanner
           bannerSize="smartBannerPortrait"
-          adUnitID="YOUR_ADMOB_BANNER_UNIT_ID"
+          adUnitID="ca-app-pub-5942855485424016/3095540737"
           servePersonalizedAds
           onDidFailToReceiveAdWithError={() => {}}
         />
