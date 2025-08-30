@@ -1,31 +1,33 @@
 {
   "expo": {
-    "name": "SEO YouGrow",
-    "slug": "seo-yougrow",
-    "scheme": "seoyougrow",
+    "name": "SEO You Grow",
+    "slug": "seo-you-grow",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "splash": {
       "image": "./assets/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0f172a"
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.seoyougrow.app",
-      "permissions": [],
-      "googleServicesFile": "",
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
-        "backgroundColor": "#0f172a"
-      }
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.lamyahedlatif.seoyougrow"
     },
-    "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.seoyougrow.app"
-    },
-    "extra": {
-      "backendUrl": "https://seo-you-grow.onrender.com"
+    "web": {
+      "favicon": "./assets/logo.png"
     }
   }
 }
