@@ -1,0 +1,16 @@
+# THIS IS A PLACEHOLDER LOCKFILE.
+# Created manually for EAS Build to avoid "Missing lockfile" warnings.
+# For accurate dependency resolutions, run "yarn install" locally.
+
+__metadata:
+  version: 6
+  cacheKey: 8
+
+"expo@*":
+  version "51.0.0"
+
+"react-native@*":
+  version "0.76.0"
+
+"react@*":
+  version "18.2.0"
