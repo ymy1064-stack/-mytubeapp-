@@ -1,8 +1,11 @@
 {
-  "name": "myyoutubeapp",
+  "name": "seo-yougrow-monorepo",
+  "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ]
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm start",
+    "build:android": "cd frontend && npm run build:android"
+  }
 }
