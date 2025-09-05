@@ -1,102 +1,83 @@
-import fetch from 'node-fetch';
-import { db } from '../server.js';
+import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
+import { ensureUser } from '../services/youtube.js';
+import { analyzeThumbnail } from '../services/gemini.js';
 
-const DAILY_LIMIT = Number(process.env.DAILY_LIMIT || 3);
-const YT_API_KEY = process.env.YOUTUBE_API_KEY || '';
+const router = Router();
 
-const qInsertUser = db.prepare('INSERT OR IGNORE INTO users (id, created_at) VALUES (?, ?)');
-const qGetQuota = db.prepare('SELECT count FROM quotas WHERE user_id = ? AND date = ?');
-const qUpsertQuota = db.prepare('INSERT INTO quotas (user_id, date, count) VALUES (?, ?, ?) ON CONFLICT(user_id, date) DO UPDATE SET count = excluded.count');
+// Rate limiting for thumbnail analysis
+const thumbnailLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 requests per window
+  message: { error: 'Too many thumbnail analysis attempts. Please try again later.' },
+  standardHeaders: true
+});
 
-const todayStr = () => new Date().toISOString().slice(0, 10);
-
-export function ensureUser(req, res, next) {
-  const uid = String(req.headers['x-user'] || '').trim();
-  if (!uid) return res.status(400).json({ error: 'User ID required' });
-  
-  qInsertUser.run(uid, Date.now());
-  req.userId = uid;
-  next();
-}
-
-export function enforceDailyLimit(req, res, next) {
-  const row = qGetQuota.get(req.userId, todayStr());
-  const used = row ? row.count : 0;
-  
-  if (used >= DAILY_LIMIT) {
-    return res.status(429).json({ error: `Daily limit reached (${DAILY_LIMIT}/day)` });
-  }
-  
-  next();
-}
-
-export function incUserCountToday(uid) {
-  const d = todayStr();
-  const used = (qGetQuota.get(uid, d)?.count || 0) + 1;
-  qUpsertQuota.run(uid, d, used);
-}
-
-const qGetCache = db.prepare('SELECT data, updated_at FROM cache_keywords WHERE q = ?');
-const qUpsertCache = db.prepare('INSERT INTO cache_keywords (q, data, updated_at) VALUES (?, ?, ?) ON CONFLICT(q) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at');
-
-export async function fetchYouTubeKeywords(q) {
-  if (!YT_API_KEY) {
-    console.log('YouTube API key not configured');
-    return [];
-  }
-
+router.post('/analyze', ensureUser, thumbnailLimiter, async (req, res) => {
   try {
-    const url = new URL('https://www.googleapis.com/youtube/v3/search');
-    url.searchParams.set('part', 'snippet');
-    url.searchParams.set('type', 'video');
-    url.searchParams.set('maxResults', '10');
-    url.searchParams.set('q', encodeURIComponent(q));
-    url.searchParams.set('key', YT_API_KEY);
+    const { type = "long", image = "" } = req.body;
 
-    const response = await fetch(url.toString());
+    // Validate input
+    if (!image) {
+      return res.status(400).json({ error: 'Image data is required' });
+    }
+
+    if (!['long', 'short'].includes(type)) {
+      return res.status(400).json({ error: 'Type must be either "long" or "short"' });
+    }
+
+    // Validate base64 image data
+    if (!image.startsWith('data:image/')) {
+      return res.status(400).json({ error: 'Invalid image format. Please provide a valid base64 image data URL' });
+    }
+
+    // Check image size (approx 5MB limit)
+    const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+    const imageSize = Buffer.from(base64Data, 'base64').length;
     
-    if (!response.ok) {
-      console.log('YouTube API error:', response.status);
-      return [];
+    if (imageSize > 5 * 1024 * 1024) {
+      return res.status(400).json({ error: 'Image is too large. Maximum size is 5MB' });
     }
 
-    const data = await response.json();
-    const words = new Set();
+    console.log(`Analyzing ${type} thumbnail, size: ${Math.round(imageSize / 1024)}KB`);
 
-    for (const item of data.items || []) {
-      const text = `${item.snippet?.title || ''} ${item.snippet?.description || ''}`;
-      const tokens = text.toLowerCase()
-        .split(/[^a-z0-9\u0900-\u097F]+/)
-        .filter(token => token.length > 2);
-      
-      tokens.forEach(token => words.add(token));
-    }
+    // Analyze the thumbnail
+    const analysisResult = await analyzeThumbnail(type, image);
 
-    return Array.from(words).slice(0, 30);
+    res.json({ 
+      ok: true, 
+      data: analysisResult,
+      imageSize: `${Math.round(imageSize / 1024)}KB`
+    });
+
   } catch (error) {
-    console.log('YouTube keywords fetch error:', error.message);
-    return [];
-  }
-}
+    console.error('Thumbnail analysis error:', error.message);
 
-export async function getKeywordsWithCache(q) {
-  const key = q.trim().toLowerCase().slice(0, 100);
-  
-  if (!key) return [];
-
-  try {
-    const hit = qGetCache.get(key);
-    
-    if (hit && (Date.now() - hit.updated_at) < 3 * 24 * 60 * 60 * 1000) {
-      return JSON.parse(hit.data);
+    // Specific error handling
+    if (error.message.includes('budget') || error.message.includes('quota')) {
+      return res.status(429).json({ error: 'Daily AI analysis limit reached. Please try tomorrow.' });
     }
 
-    const freshData = await fetchYouTubeKeywords(key);
-    qUpsertCache.run(key, JSON.stringify(freshData), Date.now());
-    
-    return freshData;
-  } catch (error) {
-    console.log('Keywords cache error:', error.message);
-    return [];
+    if (error.message.includes('image') || error.message.includes('format')) {
+      return res.status(400).json({ error: 'Invalid image format. Please try with a different image.' });
+    }
+
+    if (error.message.includes('size') || error.message.includes('large')) {
+      return res.status(400).json({ error: 'Image is too large. Please use a smaller image.' });
+    }
+
+    res.status(500).json({ error: 'Failed to analyze thumbnail. Please try again.' });
   }
-                     }
+});
+
+// Health check endpoint for thumbnail service
+router.get('/health', (req, res) => {
+  res.json({ 
+    ok: true, 
+    service: 'thumbnail-analyzer',
+    status: 'operational',
+    timestamp: new Date().toISOString()
+  });
+});
+
+export default router;
