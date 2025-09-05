@@ -1,33 +1,38 @@
 {
   "expo": {
-    "name": "SEO You Grow",
-    "slug": "seo-you-grow",
+    "name": "SEO YouGrow",
+    "slug": "seo-yougrow",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0f172a"
     },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.seoyougrow.app"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0f172a"
       },
-      "package": "com.lamyahedlatif.seoyougrow"
+      "package": "com.seoyougrow.app",
+      "permissions": ["android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"]
     },
     "web": {
-      "favicon": "./assets/logo.png"
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-ads-admob"],
+    "extra": {
+      "backendUrl": "https://seo-yougrow-backend.onrender.com",
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
     }
   }
 }
