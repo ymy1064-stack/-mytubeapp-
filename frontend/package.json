@@ -14,7 +14,7 @@
     "expo": "~51.0.0",
     "expo-ads-admob": "~14.1.1",
     "expo-image-picker": "~15.0.7",
-    "expo-splash-screen": "~0.27.0",
+    "expo-splash-screen": "~0.30.10",
     "expo-updates": "~0.24.0",
     "react": "18.2.0",
     "react-native": "0.74.0",
