@@ -1,7 +1,32 @@
-node_modules
-.expo
-.expo-shared
-dist
-build
-db.sqlite
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Production builds
+/dist/
+/build/
+*.apk
+*.aab
+
+# Environment variables
 .env
+*.env
+
+# Database
+*.sqlite
+*.db
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Expo
+.expo/
+.expo-shared/
+
+# EAS
+.eas/
