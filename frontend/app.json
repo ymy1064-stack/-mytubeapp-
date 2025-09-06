@@ -11,10 +11,21 @@
       "resizeMode": "contain",
       "backgroundColor": "#0f172a"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.seoyougrow.app"
+      "bundleIdentifier": "com.seoyougrow.app",
+      "buildNumber": "1.0.0",
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-your-ios-app-id-here" // ✅ IOS_APP_ID
+      },
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to select thumbnails for analysis.",
+        "NSCameraUsageDescription": "This app needs access to your camera to take photos for thumbnail analysis.",
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -22,17 +33,45 @@
         "backgroundColor": "#0f172a"
       },
       "package": "com.seoyougrow.app",
-      "permissions": ["android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"]
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.CAMERA"
+      ],
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-your-android-app-id-here" // ✅ ANDROID_APP_ID
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-ads-admob"],
+    "plugins": [
+      [
+        "expo-ads-admob",
+        {
+          "userTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you select thumbnails for analysis.",
+          "cameraPermission": "The app accesses your camera to let you take photos for thumbnail analysis."
+        }
+      ]
+    ],
     "extra": {
-      "backendUrl": "https://seo-yougrow-backend.onrender.com",
+      "backendUrl": "https://your-app-name.onrender.com", // ✅ RENDER_BACKEND_URL
       "eas": {
-        "projectId": "your-project-id-here"
+        "projectId": "your-project-id-here" // ✅ EXPO_PROJECT_ID
       }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/your-project-id"
     }
   }
-}
+  }
