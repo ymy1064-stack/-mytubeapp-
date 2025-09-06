@@ -40,7 +40,7 @@
         "android.permission.CAMERA"
       ],
       "config": {
-        "googleMobileAdsAppId": "ca-app-pub-your-android-app-id-here" // ✅ ANDROID_APP_ID
+        "googleMobileAdsAppId": "ca-app-pub-5942855485424016/3095540737" // ✅ ANDROID_APP_ID
       }
     },
     "web": {
@@ -62,7 +62,7 @@
       ]
     ],
     "extra": {
-      "backendUrl": "https://your-app-name.onrender.com", // ✅ RENDER_BACKEND_URL
+      "backendUrl": "https://seo-you-grow.onrender.com", // ✅ RENDER_BACKEND_URL
       "eas": {
         "projectId": "your-project-id-here" // ✅ EXPO_PROJECT_ID
       }
