@@ -7,14 +7,22 @@ node_modules/
 /build/
 *.apk
 *.aab
+*.keystore
 
 # Environment variables
 .env
-*.env
+*.env.local
+*.env.*
 
 # Database
 *.sqlite
 *.db
+/data/
+
+# Expo
+.expo/
+.expo-shared/
+.expo/
 
 # OS files
 .DS_Store
@@ -23,10 +31,10 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# Expo
-.expo/
-.expo-shared/
-
-# EAS
-.eas/
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
