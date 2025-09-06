@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import Database from 'better-sqlite3';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import fs from 'fs';
 
 // Import routes
 import seoRoutes from './routes/seo.js';
@@ -47,7 +48,9 @@ app.use(cors({
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: NODE_ENV === 'production' ? 100 : 1000,
-  message: 'Too many requests from this IP, please try again later.'
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false
 });
 app.use(limiter);
 
@@ -56,7 +59,6 @@ const dbDir = join(__dirname, 'data');
 const dbPath = join(dbDir, 'db.sqlite');
 
 // Create data directory if it doesn't exist
-import fs from 'fs';
 if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
